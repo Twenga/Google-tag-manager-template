@@ -1,1 +1,0 @@
-# Google-tag-manager-template
