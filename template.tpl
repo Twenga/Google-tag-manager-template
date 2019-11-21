@@ -128,10 +128,10 @@ var TwgT = {
 				oTwgTConfig.attribution_weight = copyFromDataLayer(attributionWeightKey);
             }
 
-            sTwgTConfig = '{"m": "'+oTwgTConfig.master_site_id+'","o": "'+oTwgTConfig.order_id+'","c": "'+oTwgTConfig.currency+'","w": "'+oTwgTConfig.attribution_weight+'","is": [';
+            sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","o":"'+oTwgTConfig.order_id+'","c":"'+oTwgTConfig.currency+'","w":"'+oTwgTConfig.attribution_weight+'","is":[';
             var aItems = [];
             for (var index in oTwgTConfig.items) {              
-				aItems.push('{"i":"'+oTwgTConfig.items[index].id+'", "q":"'+oTwgTConfig.items[index].quantity+'", "p":"'+oTwgTConfig.items[index].price+'"}');
+				aItems.push('{"i":"'+oTwgTConfig.items[index].id+'","q":"'+oTwgTConfig.items[index].quantity+'","p":"'+oTwgTConfig.items[index].price+'"}');
             }
             sTwgTConfig += aItems.join(',')+']}';
 		} 
@@ -147,7 +147,7 @@ var TwgT = {
             if (query('read_data_layer', refidKey)) {
               oTwgTConfig.ref_id = copyFromDataLayer(refidKey);
             }
-            sTwgTConfig = '{"m": "'+oTwgTConfig.master_site_id+'","c": "'+oTwgTConfig.currency+'","r": "'+oTwgTConfig.ref_id+'","p": "'+oTwgTConfig.price+'"}';
+            sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","c":"'+oTwgTConfig.currency+'","i":"'+oTwgTConfig.ref_id+'","p":"'+oTwgTConfig.price+'"}';
 		} else {
             data.gtmOnFailure();
             return false;
@@ -450,6 +450,6 @@ scenarios:
 
 ___NOTES___
 
-Created on 21/11/2019 à 11:58:12
+Created on 21/11/2019 à 14:37:42
 
 
