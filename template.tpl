@@ -33,7 +33,7 @@ ___TEMPLATE_PARAMETERS___
   {
     "type": "TEXT",
     "name": "masterSiteId",
-    "displayName": "master_site_id",
+    "displayName": "masterSiteId",
     "simpleValueType": true,
     "valueValidators": [
       {
