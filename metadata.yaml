@@ -1,5 +1,5 @@
 homepage: "https://twenga-solutions.com"
 documentation: "https://www.twenga-solutions.com/en/gtmt"
 versions:
-      - sha: 7d9a9fdcf75cb840e4be36cbf23572054a20edbf
-        changeNotes: Initial release.
+  - sha: dc1f441d08290807bb77043fadb93cb7698628af
+    changeNotes: Initial release.
