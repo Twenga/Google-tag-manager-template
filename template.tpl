@@ -256,8 +256,194 @@ ___WEB_PERMISSIONS___
   }
 ]
 
+
+___TESTS___
+
+scenarios:
+- name: Failure No Event
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 666;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: undefined, host:'https://twenga.twgdns.com', master_site_id:666});
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: Failure - No host
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 666;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:undefined, master_site_id:666});
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: Failure Send Pixel error
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onFailure();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 666;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', master_site_id:666});
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: Transaction - Success
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 666;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1},{'price':15.99,'id':784469,'quantity':8},{'price':15048.43,'id':13548,'quantity':2}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', master_site_id:666});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Transaction - Success - Missing order_id
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return undefined;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', master_site_id:666});
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: Transaction - Success - Missing Currency
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 66;}
+      else if (DLVar == 'twenga_currency') {return  undefined;}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1},{'price':15.99,'id':784469,'quantity':8},{'price':15048.43,'id':13548,'quantity':2}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', master_site_id:666});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Product - Success
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_ref_id') {return 21;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_price') {return 15.26;}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'pp', host:'https://twenga.twgdns.com', master_site_id:666});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Transaction - Success - Minimum params
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return undefined;}
+      else if (DLVar == 'twenga_currency') {return undefined;}
+      else if (DLVar == 'twenga_items') {return undefined;}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', master_site_id:undefined});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Product - Success - Minimum params
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_ref_id') {return undefined;}
+      else if (DLVar == 'twenga_currency') {return undefined;}
+      else if (DLVar == 'twenga_price') {return undefined;}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'pp', host:'https://twenga.twgdns.com', master_site_id:undefined});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+
+
 ___NOTES___
 
-Created on 25/11/2019 à 17:12:02
+Created on 25/11/2019 à 17:15:41
 
 
