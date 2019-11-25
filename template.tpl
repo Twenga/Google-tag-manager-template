@@ -1,4 +1,4 @@
-___TERMS_OF_SERVICE___
+﻿___TERMS_OF_SERVICE___
 
 By creating or modifying this file you agree to Google Tag Manager's Community
 Template Gallery Developer Terms of Service available at
@@ -16,9 +16,9 @@ ___INFO___
   "displayName": "Twenga Pixel",
   "categories": ["CONVERSIONS", "AFFILIATE_MARKETING"],
   "brand": {
-    "id": "github.com_Twenga",
-    "displayName": "Twenga",
-    "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJ9JREFUeNpi+P//vz0Qn/xPOjgGxE6MQOI5AwODBAN54D7IgP8M5IOPKAYINx5k+PD9D14dApwsDG/r7eEGMDFQCFBcALL94vPPYPaFZ18YirbcArP7fNQYDKR4wGx9SV6wK2AuYEF3nr2SIIYtIM3YxEGAYi+MGsDAwIJLAjm6QGyi0gG5SfkJkCFNpgF3GIAGeIByJBnZ+SFIL0CAAQChM62Q0Ee53AAAAABJRU5ErkJggg\u003d\u003d"
+    "id": "brand_dummy",
+    "displayName": "",
+    "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAABMCAIAAABI9cZ8AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZFJREFUeNrs279LQlEUwHFfvtCWjJaGwBpqjJagRZqiP6KoraZoa3ON/gAb3YKWNiMHoSVoCBs0CcEanknQWyJbMpLogFs/zPPo5uX1PbxBrle5H+713PN4Vye2m4+EPQYi/yBAggQJEiRIkCBBggRpUbjaDywkRzfnJmfHhicSQ0ZHVm8+y/Wh8bH1unfhnd4+qL7KUd1PplPT6dRU32dmv3K3fnxpZLnKHNoglFidGZfLCFJWqT0/M9VgFMiR+KA9SEkKZNdQID8n3t9BHl379iBVu4gCmSl6Zf/JBqEMY/uk2nv/qLu40nvvbKkhW6uUAf1KQlIMHFbv13JleWGqGAgQsrsWlue7dFg6OO+sPUmYiZirrYGMlHVGFyHZFSRIkCBBggQJEiRIkCBBggQJEiRIkCBBggQJEiRIkCC7x48nGII9PLZuJjNF77u3cjU/JMids5svH5VL40a+8gcD0J3+CBat9lu21Gi+tONutHOAVHjSslW4Uh3iCBwOfy0ECRIkSJAgQYIECdKeeBdgAMdqddTmfQP5AAAAAElFTkSuQmCC"
   },
   "description": "Twenga Pixel GTM tag template",
   "containerContexts": [
@@ -255,8 +255,9 @@ ___WEB_PERMISSIONS___
     "isRequired": true
   }
 ]
+
 ___NOTES___
 
-Created on 25/11/2019 à 15:41:11
+Created on 25/11/2019 à 17:12:02
 
 
