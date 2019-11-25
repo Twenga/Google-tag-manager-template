@@ -32,7 +32,7 @@ ___TEMPLATE_PARAMETERS___
 [
   {
     "type": "TEXT",
-    "name": "master_site_id",
+    "name": "masterSiteId",
     "displayName": "master_site_id",
     "simpleValueType": true,
     "valueValidators": [
@@ -118,7 +118,7 @@ var TwgT = {
         	data.gtmOnFailure();return false;
         }
 
-    	var oTwgTConfig = {"master_site_id":data.master_site_id};
+    	var oTwgTConfig = {"master_site_id":data.masterSiteId};
 		var sFileName = '';
 		var sTwgTConfig = '';
 		const sHost = data.host;
@@ -276,7 +276,7 @@ scenarios:
     });
 
     // Call runCode to run the template's code.
-    runCode({event: undefined, host:'https://twenga.twgdns.com', master_site_id:666});
+    runCode({event: undefined, host:'https://twenga.twgdns.com', masterSiteId:666});
 
     // Verify that the tag finished with failure.
     assertApi('gtmOnFailure').wasCalled();
@@ -296,7 +296,7 @@ scenarios:
     });
 
     // Call runCode to run the template's code.
-    runCode({event: 'tx', host:undefined, master_site_id:666});
+    runCode({event: 'tx', host:undefined, masterSiteId:666});
 
     // Verify that the tag finished with failure.
     assertApi('gtmOnFailure').wasCalled();
@@ -316,7 +316,7 @@ scenarios:
     });
 
     // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', master_site_id:666});
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
 
     // Verify that the tag finished with failure.
     assertApi('gtmOnFailure').wasCalled();
@@ -336,7 +336,7 @@ scenarios:
     });
 
     // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', master_site_id:666});
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
@@ -356,7 +356,7 @@ scenarios:
     });
 
     // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', master_site_id:666});
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
 
     // Verify that the tag finished with failure.
     assertApi('gtmOnFailure').wasCalled();
@@ -376,7 +376,7 @@ scenarios:
     });
 
     // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', master_site_id:666});
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
@@ -396,7 +396,7 @@ scenarios:
     });
 
     // Call runCode to run the template's code.
-    runCode({event: 'pp', host:'https://twenga.twgdns.com', master_site_id:666});
+    runCode({event: 'pp', host:'https://twenga.twgdns.com', masterSiteId:666});
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
@@ -416,7 +416,7 @@ scenarios:
     });
 
     // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', master_site_id:undefined});
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:undefined});
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
@@ -436,7 +436,7 @@ scenarios:
     });
 
     // Call runCode to run the template's code.
-    runCode({event: 'pp', host:'https://twenga.twgdns.com', master_site_id:undefined});
+    runCode({event: 'pp', host:'https://twenga.twgdns.com', masterSiteId:undefined});
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
@@ -444,6 +444,6 @@ scenarios:
 
 ___NOTES___
 
-Created on 25/11/2019 à 17:15:41
+Created on 25/11/2019 à 17:53:17
 
 
