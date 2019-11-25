@@ -1,3 +1,11 @@
+___TERMS_OF_SERVICE___
+
+By creating or modifying this file you agree to Google Tag Manager's Community
+Template Gallery Developer Terms of Service available at
+https://developers.google.com/tag-manager/gallery-tos (or such other URL as
+Google may provide), as modified from time to time.
+
+
 ___INFO___
 
 {
@@ -8,7 +16,7 @@ ___INFO___
   "displayName": "Twenga Pixel",
   "categories": ["CONVERSIONS", "AFFILIATE_MARKETING"],
   "brand": {
-    "id": "twenga",
+    "id": "brand_dummy",
     "displayName": "Twenga",
     "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJ9JREFUeNpi+P//vz0Qn/xPOjgGxE6MQOI5AwODBAN54D7IgP8M5IOPKAYINx5k+PD9D14dApwsDG/r7eEGMDFQCFBcALL94vPPYPaFZ18YirbcArP7fNQYDKR4wGx9SV6wK2AuYEF3nr2SIIYtIM3YxEGAYi+MGsDAwIJLAjm6QGyi0gG5SfkJkCFNpgF3GIAGeIByJBnZ+SFIL0CAAQChM62Q0Ee53AAAAABJRU5ErkJggg\u003d\u003d"
   },
