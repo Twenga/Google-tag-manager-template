@@ -16,8 +16,8 @@ ___INFO___
   "displayName": "Twenga Pixel",
   "categories": ["CONVERSIONS", "AFFILIATE_MARKETING"],
   "brand": {
-    "id": "brand_dummy",
-    "displayName": "",
+    "id": "twenga",
+    "displayName": "Twenga",
     "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJ9JREFUeNpi+P//vz0Qn/xPOjgGxE6MQOI5AwODBAN54D7IgP8M5IOPKAYINx5k+PD9D14dApwsDG/r7eEGMDFQCFBcALL94vPPYPaFZ18YirbcArP7fNQYDKR4wGx9SV6wK2AuYEF3nr2SIIYtIM3YxEGAYi+MGsDAwIJLAjm6QGyi0gG5SfkJkCFNpgF3GIAGeIByJBnZ+SFIL0CAAQChM62Q0Ee53AAAAABJRU5ErkJggg\u003d\u003d"
   },
   "description": "Twenga Pixel GTM tag template",
