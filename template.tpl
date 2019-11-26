@@ -14,7 +14,7 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "Twenga Pixel",
-  "categories": ["CONVERSIONS", "AFFILIATE_MARKETING"],
+  "categories": ["CONVERSIONS","AFFILIATE_MARKETING"],
   "brand": {
     "id": "twenga",
     "displayName": "Twenga",
@@ -52,12 +52,6 @@ ___TEMPLATE_PARAMETERS___
     "valueValidators": [
       {
         "type": "NON_EMPTY"
-      },
-      {
-        "type": "REGEX",
-        "args": [
-          "^https:\\/\\/.*\\..*\\.[a-z]*$"
-        ]
       }
     ]
   },
