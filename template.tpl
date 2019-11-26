@@ -16,8 +16,8 @@ ___INFO___
   "displayName": "Twenga Pixel",
   "categories": ["CONVERSIONS", "AFFILIATE_MARKETING"],
   "brand": {
-    "id": "brand_dummy",
-    "displayName": "",
+    "id": "twenga",
+    "displayName": "Twenga",
     "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAABMCAIAAABI9cZ8AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZFJREFUeNrs279LQlEUwHFfvtCWjJaGwBpqjJagRZqiP6KoraZoa3ON/gAb3YKWNiMHoSVoCBs0CcEanknQWyJbMpLogFs/zPPo5uX1PbxBrle5H+713PN4Vye2m4+EPQYi/yBAggQJEiRIkCBBggRpUbjaDywkRzfnJmfHhicSQ0ZHVm8+y/Wh8bH1unfhnd4+qL7KUd1PplPT6dRU32dmv3K3fnxpZLnKHNoglFidGZfLCFJWqT0/M9VgFMiR+KA9SEkKZNdQID8n3t9BHl379iBVu4gCmSl6Zf/JBqEMY/uk2nv/qLu40nvvbKkhW6uUAf1KQlIMHFbv13JleWGqGAgQsrsWlue7dFg6OO+sPUmYiZirrYGMlHVGFyHZFSRIkCBBggQJEiRIkCBBggQJEiRIkCBBggQJEiRIkCC7x48nGII9PLZuJjNF77u3cjU/JMids5svH5VL40a+8gcD0J3+CBat9lu21Gi+tONutHOAVHjSslW4Uh3iCBwOfy0ECRIkSJAgQYIECdKeeBdgAMdqddTmfQP5AAAAAElFTkSuQmCC"
   },
   "description": "Twenga Pixel GTM tag template",
