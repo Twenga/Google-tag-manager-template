@@ -14,11 +14,11 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "Twenga Pixel",
-  "categories": ["CONVERSIONS", "AFFILIATE_MARKETING"],
+  "categories": ["CONVERSIONS","AFFILIATE_MARKETING"],
   "brand": {
-    "id": "brand_dummy",
-    "displayName": "",
-    "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJ9JREFUeNpi+P//vz0Qn/xPOjgGxE6MQOI5AwODBAN54D7IgP8M5IOPKAYINx5k+PD9D14dApwsDG/r7eEGMDFQCFBcALL94vPPYPaFZ18YirbcArP7fNQYDKR4wGx9SV6wK2AuYEF3nr2SIIYtIM3YxEGAYi+MGsDAwIJLAjm6QGyi0gG5SfkJkCFNpgF3GIAGeIByJBnZ+SFIL0CAAQChM62Q0Ee53AAAAABJRU5ErkJggg\u003d\u003d"
+    "id": "twenga",
+    "displayName": "Twenga",
+    "thumbnail": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEwAAABMCAIAAABI9cZ8AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZFJREFUeNrs279LQlEUwHFfvtCWjJaGwBpqjJagRZqiP6KoraZoa3ON/gAb3YKWNiMHoSVoCBs0CcEanknQWyJbMpLogFs/zPPo5uX1PbxBrle5H+713PN4Vye2m4+EPQYi/yBAggQJEiRIkCBBggRpUbjaDywkRzfnJmfHhicSQ0ZHVm8+y/Wh8bH1unfhnd4+qL7KUd1PplPT6dRU32dmv3K3fnxpZLnKHNoglFidGZfLCFJWqT0/M9VgFMiR+KA9SEkKZNdQID8n3t9BHl379iBVu4gCmSl6Zf/JBqEMY/uk2nv/qLu40nvvbKkhW6uUAf1KQlIMHFbv13JleWGqGAgQsrsWlue7dFg6OO+sPUmYiZirrYGMlHVGFyHZFSRIkCBBggQJEiRIkCBBggQJEiRIkCBBggQJEiRIkCC7x48nGII9PLZuJjNF77u3cjU/JMids5svH5VL40a+8gcD0J3+CBat9lu21Gi+tONutHOAVHjSslW4Uh3iCBwOfy0ECRIkSJAgQYIECdKeeBdgAMdqddTmfQP5AAAAAElFTkSuQmCC"
   },
   "description": "Twenga Pixel GTM tag template",
   "containerContexts": [
@@ -32,8 +32,8 @@ ___TEMPLATE_PARAMETERS___
 [
   {
     "type": "TEXT",
-    "name": "master_site_id",
-    "displayName": "master_site_id",
+    "name": "masterSiteId",
+    "displayName": "masterSiteId",
     "simpleValueType": true,
     "valueValidators": [
       {
@@ -52,12 +52,6 @@ ___TEMPLATE_PARAMETERS___
     "valueValidators": [
       {
         "type": "NON_EMPTY"
-      },
-      {
-        "type": "REGEX",
-        "args": [
-          "^https:\\/\\/.*\\..*\\.[a-z]*$"
-        ]
       }
     ]
   },
@@ -118,7 +112,7 @@ var TwgT = {
         	data.gtmOnFailure();return false;
         }
 
-    	var oTwgTConfig = {"master_site_id":data.master_site_id};
+    	var oTwgTConfig = {"master_site_id":data.masterSiteId};
 		var sFileName = '';
 		var sTwgTConfig = '';
 		const sHost = data.host;
@@ -255,8 +249,195 @@ ___WEB_PERMISSIONS___
     "isRequired": true
   }
 ]
+
+
+___TESTS___
+
+scenarios:
+- name: Failure No Event
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 666;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: undefined, host:'https://twenga.twgdns.com', masterSiteId:666});
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: Failure - No host
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 666;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:undefined, masterSiteId:666});
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: Failure Send Pixel error
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onFailure();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 666;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: Transaction - Success
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 666;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1},{'price':15.99,'id':784469,'quantity':8},{'price':15048.43,'id':13548,'quantity':2}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Transaction - Success - Missing order_id
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return undefined;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
+
+    // Verify that the tag finished with failure.
+    assertApi('gtmOnFailure').wasCalled();
+- name: Transaction - Success - Missing Currency
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 66;}
+      else if (DLVar == 'twenga_currency') {return  undefined;}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1},{'price':15.99,'id':784469,'quantity':8},{'price':15048.43,'id':13548,'quantity':2}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Product - Success
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_ref_id') {return 21;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_price') {return 15.26;}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'pp', host:'https://twenga.twgdns.com', masterSiteId:666});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Transaction - Success - Minimum params
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return undefined;}
+      else if (DLVar == 'twenga_currency') {return undefined;}
+      else if (DLVar == 'twenga_items') {return undefined;}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:undefined});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+- name: Product - Success - Minimum params
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('query', true);
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_ref_id') {return undefined;}
+      else if (DLVar == 'twenga_currency') {return undefined;}
+      else if (DLVar == 'twenga_price') {return undefined;}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'pp', host:'https://twenga.twgdns.com', masterSiteId:undefined});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
+
+
 ___NOTES___
 
-Created on 25/11/2019 à 15:41:11
+Created on 25/11/2019 à 17:53:17
 
 
