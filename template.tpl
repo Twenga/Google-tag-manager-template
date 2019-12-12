@@ -113,10 +113,6 @@ const copyFromDataLayer = require('copyFromDataLayer');
 const sendPixel = require('sendPixel');
 const queryPermission = require('queryPermission');
 
-//Testing injectScript
-const injectScript = require('injectScript');
-injectScript('https://www.twenga-solutions.com/test.js', function(){data.gtmOnSuccess();return true;}, function(){data.gtmOnFailure();return false;});
-
 var TwgT = {
     sendRequest : function() {
         if (!data.host || !data.event) {
@@ -252,32 +248,6 @@ ___WEB_PERMISSIONS___
               {
                 "type": 1,
                 "string": "https://*.twgdns.com/"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "clientAnnotations": {
-      "isEditedByUser": true
-    },
-    "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
-        "publicId": "inject_script",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "urls",
-          "value": {
-            "type": 2,
-            "listItem": [
-              {
-                "type": 1,
-                "string": "https://www.twenga-solutions.com/"
               }
             ]
           }
@@ -479,6 +449,6 @@ scenarios:
 
 ___NOTES___
 
-Created on 12/12/2019 à 12:15:37
+Created on 12/12/2019 à 16:58:25
 
 
