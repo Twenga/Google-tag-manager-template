@@ -113,6 +113,9 @@ const copyFromDataLayer = require('copyFromDataLayer');
 const sendPixel = require('sendPixel');
 const queryPermission = require('queryPermission');
 
+const logToConsole = require('logToConsole');
+
+
 var TwgT = {
     sendRequest : function() {
         if (!data.host || !data.event) {
@@ -150,8 +153,14 @@ var TwgT = {
 
             sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","o":"'+oTwgTConfig.order_id+'","c":"'+oTwgTConfig.currency+'","w":"'+oTwgTConfig.attribution_weight+'","is":[';
             var aItems = [];
-            for (var index in oTwgTConfig.items) {              
-                aItems.push('{"i":"'+oTwgTConfig.items[index].id+'","q":"'+oTwgTConfig.items[index].quantity+'","v":"'+oTwgTConfig.items[index].variant_id+'","p":"'+oTwgTConfig.items[index].price+'"}');
+            for (var index in oTwgTConfig.items) {            
+				var sItemConfig = '';   
+           		sItemConfig = '{"i":"'+oTwgTConfig.items[index].id+'","q":"'+oTwgTConfig.items[index].quantity+'"';
+                if (oTwgTConfig.items[index].variant_id) {
+                  sItemConfig += ',"v":"'+oTwgTConfig.items[index].variant_id+'"';
+                }
+              	sItemConfig += ',"p":"'+oTwgTConfig.items[index].price+'"}';
+              	aItems.push(sItemConfig);
             }
             sTwgTConfig += aItems.join(',')+']}';
         } 
@@ -168,12 +177,19 @@ var TwgT = {
               oTwgTConfig.ref_id = copyFromDataLayer(refidKey);
             }
           
-          	const variantidKey = 'twenga_varient_id';
+          	const variantidKey = 'twenga_variant_id';
             if (queryPermission('read_data_layer', variantidKey)) {
               oTwgTConfig.variant_id = copyFromDataLayer(variantidKey);
             }
           
-            sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","c":"'+oTwgTConfig.currency+'","i":"'+oTwgTConfig.ref_id+'","v":"'+oTwgTConfig.variant_id+'","p":"'+oTwgTConfig.price+'"}';
+            sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","c":"'+oTwgTConfig.currency+'","i":"'+oTwgTConfig.ref_id+'"';
+          
+          if (oTwgTConfig.variant_id) {
+          	sTwgTConfig += ',"v":"'+oTwgTConfig.variant_id+'"';
+          }
+          
+          sTwgTConfig += ',"p":"'+oTwgTConfig.price+'"}';
+          
         } else {
             data.gtmOnFailure();
             return false;
@@ -4508,6 +4524,24 @@ ___WEB_PERMISSIONS___
       "isEditedByUser": true
     },
     "isRequired": true
+  },
+  {
+    "instance": {
+      "key": {
+        "publicId": "logging",
+        "versionId": "1"
+      },
+      "param": [
+        {
+          "key": "environments",
+          "value": {
+            "type": 1,
+            "string": "debug"
+          }
+        }
+      ]
+    },
+    "isRequired": true
   }
 ]
 
@@ -4647,7 +4681,7 @@ scenarios:
     mock('copyFromDataLayer', function(DLVar){
       if (DLVar == 'twenga_ref_id') {return 21;}
       else if (DLVar == 'twenga_price') {return 15.26;}
-      else if (DLVar == 'variant_id') {return '123ABC';}
+      else if (DLVar == 'twenga_variant_id') {return '123ABC';}
       else{return false;}
     });
 
@@ -4721,6 +4755,6 @@ scenarios:
 
 ___NOTES___
 
-Created on 06/03/2020 à 15:17:43
+Created on 06/03/2020 à 16:25:50
 
 
