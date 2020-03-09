@@ -112,7 +112,6 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 const copyFromDataLayer = require('copyFromDataLayer');
 const sendPixel = require('sendPixel');
 const queryPermission = require('queryPermission');
-
 var TwgT = {
     sendRequest : function() {
         if (!data.host || !data.event) {
@@ -150,8 +149,14 @@ var TwgT = {
 
             sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","o":"'+oTwgTConfig.order_id+'","c":"'+oTwgTConfig.currency+'","w":"'+oTwgTConfig.attribution_weight+'","is":[';
             var aItems = [];
-            for (var index in oTwgTConfig.items) {              
-                aItems.push('{"i":"'+oTwgTConfig.items[index].id+'","q":"'+oTwgTConfig.items[index].quantity+'","p":"'+oTwgTConfig.items[index].price+'"}');
+            for (var index in oTwgTConfig.items) {            
+				var sItemConfig = '';   
+           		sItemConfig = '{"i":"'+oTwgTConfig.items[index].id+'","q":"'+oTwgTConfig.items[index].quantity+'"';
+                if (oTwgTConfig.items[index].variant_id) {
+                  sItemConfig += ',"v":"'+oTwgTConfig.items[index].variant_id+'"';
+                }
+              	sItemConfig += ',"p":"'+oTwgTConfig.items[index].price+'"}';
+              	aItems.push(sItemConfig);
             }
             sTwgTConfig += aItems.join(',')+']}';
         } 
@@ -167,12 +172,24 @@ var TwgT = {
             if (queryPermission('read_data_layer', refidKey)) {
               oTwgTConfig.ref_id = copyFromDataLayer(refidKey);
             }
-            sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","c":"'+oTwgTConfig.currency+'","i":"'+oTwgTConfig.ref_id+'","p":"'+oTwgTConfig.price+'"}';
+          
+          	const variantidKey = 'twenga_variant_id';
+            if (queryPermission('read_data_layer', variantidKey)) {
+              oTwgTConfig.variant_id = copyFromDataLayer(variantidKey);
+            }
+          
+            sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","c":"'+oTwgTConfig.currency+'","i":"'+oTwgTConfig.ref_id+'"';
+          
+          if (oTwgTConfig.variant_id) {
+          	sTwgTConfig += ',"v":"'+oTwgTConfig.variant_id+'"';
+          }
+          
+          sTwgTConfig += ',"p":"'+oTwgTConfig.price+'"}';
+          
         } else {
             data.gtmOnFailure();
             return false;
         }
-
         sFileName = sEvent+'_'+sTwgTConfig+'.png';
         var url = sHost+'/t/gtm/'+sFileName;
         if (queryPermission('send_pixel', url)) {
@@ -4581,7 +4598,7 @@ scenarios:
     mock('copyFromDataLayer', function(DLVar){
       if (DLVar == 'twenga_order_id') {return 123;}
       else if (DLVar == 'twenga_currency') {return 'EUR';}
-      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1},{'price':15.99,'id':784469,'quantity':8},{'price':15048.43,'id':13548,'quantity':2}];}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1,'variant_id':'123ABC'},{'price':15.99,'id':784469,'quantity':8,'variant_id':'123ABC'},{'price':15048.43,'id':13548,'quantity':2,'variant_id':'123ABC'}];}
       else{return false;}
     });
 
@@ -4641,6 +4658,7 @@ scenarios:
     mock('copyFromDataLayer', function(DLVar){
       if (DLVar == 'twenga_ref_id') {return 21;}
       else if (DLVar == 'twenga_price') {return 15.26;}
+      else if (DLVar == 'twenga_variant_id') {return '123ABC';}
       else{return false;}
     });
 
@@ -4689,10 +4707,31 @@ scenarios:
 
     // Verify that the tag finished successfully.
     assertApi('gtmOnSuccess').wasCalled();
+- name: Transaction - Success - Missing variant_id
+  code: |-
+    mock('sendPixel', function(url, onSuccess, onFailure) {
+        onSuccess();
+    });
+
+    mock('queryPermission', true);
+
+
+    mock('copyFromDataLayer', function(DLVar){
+      if (DLVar == 'twenga_order_id') {return 123;}
+      else if (DLVar == 'twenga_currency') {return 'EUR';}
+      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1},{'price':15.99,'id':784469,'quantity':8},{'price':15048.43,'id':13548,'quantity':2}];}
+      else{return false;}
+    });
+
+    // Call runCode to run the template's code.
+    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
+
+    // Verify that the tag finished successfully.
+    assertApi('gtmOnSuccess').wasCalled();
 
 
 ___NOTES___
 
-Created on 17/12/2019 à 10:56:49
+Created on 09/03/2020 à 10:24:22
 
 
