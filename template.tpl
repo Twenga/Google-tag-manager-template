@@ -239,6 +239,10 @@ ___WEB_PERMISSIONS___
               {
                 "type": 1,
                 "string": "twenga_ref_id"
+              },
+              {
+                "type": 1,
+                "string": "twenga_variant_id"
               }
             ]
           }
@@ -4732,6 +4736,6 @@ scenarios:
 
 ___NOTES___
 
-Created on 09/03/2020 à 10:24:22
+Created on 09/03/2020 à 15:49:57
 
 

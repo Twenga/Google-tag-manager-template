@@ -1,5 +1,5 @@
 homepage: "https://www.twenga-solutions.com/en/"
 documentation: "https://www.twenga-solutions.com/en/shoppingboostpixel-GTM-setup"
 versions:
-  - sha: 6b26a273c0d67b4fe9a13e7e635c30325c0f3df4
+  - sha: 3004a29a7b84db90cd8c00015736b6f60fee97a2
     changeNotes: Initial release.
