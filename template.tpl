@@ -112,10 +112,6 @@ ___SANDBOXED_JS_FOR_WEB_TEMPLATE___
 const copyFromDataLayer = require('copyFromDataLayer');
 const sendPixel = require('sendPixel');
 const queryPermission = require('queryPermission');
-
-const logToConsole = require('logToConsole');
-
-
 var TwgT = {
     sendRequest : function() {
         if (!data.host || !data.event) {
@@ -194,7 +190,6 @@ var TwgT = {
             data.gtmOnFailure();
             return false;
         }
-      
         sFileName = sEvent+'_'+sTwgTConfig+'.png';
         var url = sHost+'/t/gtm/'+sFileName;
         if (queryPermission('send_pixel', url)) {
@@ -4524,24 +4519,6 @@ ___WEB_PERMISSIONS___
       "isEditedByUser": true
     },
     "isRequired": true
-  },
-  {
-    "instance": {
-      "key": {
-        "publicId": "logging",
-        "versionId": "1"
-      },
-      "param": [
-        {
-          "key": "environments",
-          "value": {
-            "type": 1,
-            "string": "debug"
-          }
-        }
-      ]
-    },
-    "isRequired": true
   }
 ]
 
@@ -4755,6 +4732,6 @@ scenarios:
 
 ___NOTES___
 
-Created on 06/03/2020 à 16:25:50
+Created on 09/03/2020 à 10:24:22
 
 
