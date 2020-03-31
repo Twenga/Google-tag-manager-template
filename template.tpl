@@ -14,7 +14,7 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "Twenga Pixel",
-  "categories": ["CONVERSIONS","AFFILIATE_MARKETING"],
+ "categories": ["CONVERSIONS","AFFILIATE_MARKETING"],
   "brand": {
     "id": "twenga",
     "displayName": "Twenga",
@@ -103,6 +103,116 @@ ___TEMPLATE_PARAMETERS___
       }
     ],
     "simpleValueType": true
+  },
+  {
+    "type": "TEXT",
+    "name": "order_id_key",
+    "displayName": "DataLayer Order Id key",
+    "simpleValueType": true,
+    "help": "Datalayer variable containing the order id, for transaction events.",
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "order_items_key",
+    "displayName": "DataLayer Items key",
+    "simpleValueType": true,
+    "help": "Datalayer variable containing the order items list, for transaction events.",
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "order_attribution_weight_key",
+    "displayName": "DataLayer order attribution weight key",
+    "simpleValueType": true,
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ],
+    "help": "Datalayer variable containing the order attribution weight , for transaction events."
+  },
+  {
+    "type": "TEXT",
+    "name": "item_ref_id_key",
+    "displayName": "DataLayer item ref id key",
+    "simpleValueType": true,
+    "help": "Key within the items list that contains the item ref id , for transaction events.",
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "item_price_key",
+    "displayName": "DataLayer item price key",
+    "simpleValueType": true,
+    "help": "Key within the items list that contains the item price, for transaction events.",
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "item_quantity_key",
+    "displayName": "DataLayer item quantity key",
+    "simpleValueType": true,
+    "help": "Key within the items list that contains the item quantity , for transaction events.",
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "item_variant_id_key",
+    "displayName": "DataLayer item variant id key",
+    "simpleValueType": true,
+    "help": "Key within the items list that contains the item variant id, for transaction events. The variant id is optional."
+  },
+  {
+    "type": "TEXT",
+    "name": "product_price_key",
+    "displayName": "DataLayer product price key",
+    "simpleValueType": true,
+    "help": "Datalayer variable containing the product price, for product display events.",
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "product_ref_id_key",
+    "displayName": "DataLayer product ref id key",
+    "simpleValueType": true,
+    "help": "Datalayer variable containing the product ref, for product display events.",
+    "valueValidators": [
+      {
+        "type": "NON_EMPTY"
+      }
+    ]
+  },
+  {
+    "type": "TEXT",
+    "name": "product_variant_id",
+    "displayName": "DataLayer product variant id key",
+    "simpleValueType": true,
+    "help": "Datalayer variable containing the product ref, for product display events. The product variant id is optional."
   }
 ]
 
@@ -114,89 +224,121 @@ const sendPixel = require('sendPixel');
 const queryPermission = require('queryPermission');
 var TwgT = {
     sendRequest : function() {
-        if (!data.host || !data.event) {
-            data.gtmOnFailure();return false;
-        }
+      if (!data.host || !data.event) {
+        data.gtmOnFailure();return false;
+      }
 
-        var oTwgTConfig = {"master_site_id":data.masterSiteId};
-        var sFileName = '';
-        var sTwgTConfig = '';
-        const sHost = data.host;
-        const sEvent = data.event;
+      var oTwgTConfig = {"master_site_id":data.masterSiteId};
+      var sFileName = '';
+      var sTwgTConfig = '';
+      const sHost = data.host;
+      const sEvent = data.event;
+      
+      //Transaction data keys
+      const orderIdKey = data.order_id_key;
+      const itemsKey = data.order_items_key;
+      const attributionWeightKey = data.order_attribution_weight_key;
+      
+	//Transaction items keys
+	const itemrefidKey = data.item_ref_id_key;
+    const itemquantityKey = data.item_quantity_key;
+    const itemvariantidKey = data.item_variant_id_key;
+	const itempriceKey = data.item_price_key;
 
-      	if (data.currency) {
-        	oTwgTConfig.currency = data.currency;
-        } else {
-        	oTwgTConfig.currency = 'EUR';
+	//Product data keys
+	const refidKey = data.product_ref_id_key;
+	const priceKey = data.product_price_key;
+	const variantidKey = data.product_variant_id_key;
+
+      if (data.currency) {
+        oTwgTConfig.currency = data.currency;
+      } else {
+        oTwgTConfig.currency = 'EUR';
+      }
+        
+      //Transaction case
+      if (sEvent == "tx") {
+        //Retrieving transaction data from dataLayer
+        if (queryPermission('read_data_layer', orderIdKey)) {
+          oTwgTConfig.order_id = copyFromDataLayer(orderIdKey);
+          if (!oTwgTConfig.order_id) {
+          	oTwgTConfig.order_id = undefined;
+          }
         }
         
-        //Transaction case
-        if (sEvent == "tx") {
-            const orderIdKey = 'twenga_order_id';
-            if (queryPermission('read_data_layer', orderIdKey)) {
-                oTwgTConfig.order_id = copyFromDataLayer(orderIdKey);
-            }
-
-            const itemsKey = 'twenga_items';
-            if (queryPermission('read_data_layer', itemsKey)) {
-                oTwgTConfig.items = copyFromDataLayer(itemsKey);
-            }
-
-            const attributionWeightKey = 'twenga_attribution_weight';
-            if (queryPermission('read_data_layer', attributionWeightKey)) {
-                oTwgTConfig.attribution_weight = copyFromDataLayer(attributionWeightKey);
-            }
-
-            sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","o":"'+oTwgTConfig.order_id+'","c":"'+oTwgTConfig.currency+'","w":"'+oTwgTConfig.attribution_weight+'","is":[';
-            var aItems = [];
-            for (var index in oTwgTConfig.items) {            
-				var sItemConfig = '';   
-           		sItemConfig = '{"i":"'+oTwgTConfig.items[index].id+'","q":"'+oTwgTConfig.items[index].quantity+'"';
-                if (oTwgTConfig.items[index].variant_id) {
-                  sItemConfig += ',"v":"'+oTwgTConfig.items[index].variant_id+'"';
-                }
-              	sItemConfig += ',"p":"'+oTwgTConfig.items[index].price+'"}';
-              	aItems.push(sItemConfig);
-            }
-            sTwgTConfig += aItems.join(',')+']}';
-        } 
-        //Product case
-        else if (sEvent == "pp") {
-
-            const priceKey = 'twenga_price';
-            if (queryPermission('read_data_layer', priceKey)) {
-              oTwgTConfig.price = copyFromDataLayer(priceKey);
-            }
-
-            const refidKey = 'twenga_ref_id';
-            if (queryPermission('read_data_layer', refidKey)) {
-              oTwgTConfig.ref_id = copyFromDataLayer(refidKey);
-            }
-          
-          	const variantidKey = 'twenga_variant_id';
-            if (queryPermission('read_data_layer', variantidKey)) {
-              oTwgTConfig.variant_id = copyFromDataLayer(variantidKey);
-            }
-          
-            sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","c":"'+oTwgTConfig.currency+'","i":"'+oTwgTConfig.ref_id+'"';
-          
-          if (oTwgTConfig.variant_id) {
-          	sTwgTConfig += ',"v":"'+oTwgTConfig.variant_id+'"';
+        if (queryPermission('read_data_layer', itemsKey)) {
+          oTwgTConfig.items = copyFromDataLayer(itemsKey);
+          if (!oTwgTConfig.items) {
+          	oTwgTConfig.items = [];
           }
-          
-          sTwgTConfig += ',"p":"'+oTwgTConfig.price+'"}';
-          
-        } else {
-            data.gtmOnFailure();
-            return false;
         }
-        sFileName = sEvent+'_'+sTwgTConfig+'.png';
-        var url = sHost+'/t/gtm/'+sFileName;
-        if (queryPermission('send_pixel', url)) {
-            var bResult = sendPixel(url, function(){data.gtmOnSuccess();return true;}, function(){data.gtmOnFailure();return false;});
+        if (queryPermission('read_data_layer', attributionWeightKey)) {
+          oTwgTConfig.attribution_weight = copyFromDataLayer(attributionWeightKey);
+          if (!oTwgTConfig.attribution_weight) {
+          	oTwgTConfig.attribution_weight = undefined;
+          }
         }
+
+        //Building Json string
+        sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","o":"'+oTwgTConfig.order_id+'","c":"'+oTwgTConfig.currency+'","w":"'+oTwgTConfig.attribution_weight+'","is":[';
+        var aItems = [];
+        for (var index in oTwgTConfig.items) {            
+          var sItemConfig = '';   
+          sItemConfig = '{"i":"'+oTwgTConfig.items[index][itemrefidKey]+'","q":"'+oTwgTConfig.items[index][itemquantityKey]+'"';
+          if (oTwgTConfig.items[index][itemvariantidKey]) {
+            sItemConfig += ',"v":"'+oTwgTConfig.items[index][itemvariantidKey]+'"';
+          }
+          sItemConfig += ',"p":"'+oTwgTConfig.items[index][itempriceKey]+'"}';
+          aItems.push(sItemConfig);
+        }
+        sTwgTConfig += aItems.join(',')+']}';
+      }
+
+      //Product case
+      else if (sEvent == "pp") {        
+        //Retrieving product data from dataLayer
+        if (queryPermission('read_data_layer', priceKey)) {
+          oTwgTConfig.price = copyFromDataLayer(priceKey);
+          if (!oTwgTConfig.price) {
+          	oTwgTConfig.price = undefined;
+          }
+        }
+
+        if (queryPermission('read_data_layer', refidKey)) {
+          oTwgTConfig.ref_id = copyFromDataLayer(refidKey);
+          if (!oTwgTConfig.ref_id) {
+          	oTwgTConfig.ref_id = undefined;
+          }
+        }
+        
+        if (queryPermission('read_data_layer', variantidKey)) {
+          oTwgTConfig.variant_id = copyFromDataLayer(variantidKey);
+          if (!oTwgTConfig.variant_id) {
+          	oTwgTConfig.variant_id = undefined;
+          }
+        }
+
+        //Building Json string
+        sTwgTConfig = '{"m":"'+oTwgTConfig.master_site_id+'","c":"'+oTwgTConfig.currency+'","i":"'+oTwgTConfig.ref_id+'"';
+
+        if (oTwgTConfig.variant_id) {
+          sTwgTConfig += ',"v":"'+oTwgTConfig.variant_id+'"';
+        }
+        sTwgTConfig += ',"p":"'+oTwgTConfig.price+'"}';
+        
+      } else {
         data.gtmOnFailure();
-    }
+        return false;
+      }
+      
+      //Building tracking URL
+      sFileName = sEvent+'_'+sTwgTConfig+'.png';
+      var url = sHost+'/t/gtm/'+sFileName;
+      if (queryPermission('send_pixel', url)) {
+        var bResult = sendPixel(url, function(){data.gtmOnSuccess();return true;}, function(){data.gtmOnFailure();return false;});
+      }
+      data.gtmOnFailure();
+	}
 };
 TwgT.sendRequest();
 
@@ -210,44 +352,7 @@ ___WEB_PERMISSIONS___
         "publicId": "read_data_layer",
         "versionId": "1"
       },
-      "param": [
-        {
-          "key": "keyPatterns",
-          "value": {
-            "type": 2,
-            "listItem": [
-              {
-                "type": 1,
-                "string": "twenga_order_id"
-              },
-              {
-                "type": 1,
-                "string": "twenga_currency"
-              },
-              {
-                "type": 1,
-                "string": "twenga_items"
-              },
-              {
-                "type": 1,
-                "string": "twenga_attribution_weight"
-              },
-              {
-                "type": 1,
-                "string": "twenga_price"
-              },
-              {
-                "type": 1,
-                "string": "twenga_ref_id"
-              },
-              {
-                "type": 1,
-                "string": "twenga_variant_id"
-              }
-            ]
-          }
-        }
-      ]
+      "param": []
     },
     "clientAnnotations": {
       "isEditedByUser": true
@@ -4531,211 +4636,150 @@ ___TESTS___
 
 scenarios:
 - name: Failure No Event
-  code: |-
-    mock('sendPixel', function(url, onSuccess, onFailure) {
-        onSuccess();
-    });
-
-    mock('query', true);
-
-    mock('copyFromDataLayer', function(DLVar){
-      if (DLVar == 'twenga_order_id') {return 123;}
-      else if (DLVar == 'twenga_currency') {return 'EUR';}
-      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
-      else{return false;}
-    });
-
-    // Call runCode to run the template's code.
-    runCode({event: undefined, host:'https://twenga.twgdns.com', masterSiteId:666});
-
-    // Verify that the tag finished with failure.
-    assertApi('gtmOnFailure').wasCalled();
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'twenga_order_id') {return 123;}\n  else if (DLVar == 'twenga_currency')\
+    \ {return 'EUR';}\n  else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nrunCode({\n\
+    \  event: undefined, \n  host:'https://twenga.twgdns.com', \n  masterSiteId:666,\n\
+    \  order_id_key:'twenga_order_id',\n  order_items_key:'twenga_items',\n  order_attribution_weight_key:'twenga_attribution_weight',\n\
+    \  item_ref_id_key:'id',\n  item_price_key:'price',\n  item_quantity_key:'quantity',\n\
+    \  item_variant_id_key:'variant_id',\n  product_price_key:'twenga_price',\n  product_ref_id_key:'twenga_ref_id',\n\
+    \  product_variant_id:'twenga_variant_id'\n});\n\n// Verify that the tag finished\
+    \ with failure.\nassertApi('gtmOnFailure').wasCalled();"
 - name: Failure - No host
-  code: |-
-    mock('sendPixel', function(url, onSuccess, onFailure) {
-        onSuccess();
-    });
-
-    mock('query', true);
-
-    mock('copyFromDataLayer', function(DLVar){
-      if (DLVar == 'twenga_order_id') {return 123;}
-      else if (DLVar == 'twenga_currency') {return 'EUR';}
-      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
-      else{return false;}
-    });
-
-    // Call runCode to run the template's code.
-    runCode({event: 'tx', host:undefined, masterSiteId:666});
-
-    // Verify that the tag finished with failure.
-    assertApi('gtmOnFailure').wasCalled();
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'twenga_order_id') {return 123;}\n  else if (DLVar == 'twenga_currency')\
+    \ {return 'EUR';}\n  else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nrunCode({\n\
+    \  vent: 'tx', \n  host:undefined, \n  masterSiteId:666,\n  order_id_key:'twenga_order_id',\n\
+    \  order_items_key:'twenga_items',\n  order_attribution_weight_key:'twenga_attribution_weight',\n\
+    \  item_ref_id_key:'id',\n  item_price_key:'price',\n  item_quantity_key:'quantity',\n\
+    \  item_variant_id_key:'variant_id',\n  product_price_key:'twenga_price',\n  product_ref_id_key:'twenga_ref_id',\n\
+    \  product_variant_id:'twenga_variant_id'});\n\n// Verify that the tag finished\
+    \ with failure.\nassertApi('gtmOnFailure').wasCalled();"
 - name: Failure Send Pixel error
-  code: |-
-    mock('sendPixel', function(url, onSuccess, onFailure) {
-        onFailure();
-    });
-
-    mock('query', true);
-
-    mock('copyFromDataLayer', function(DLVar){
-      if (DLVar == 'twenga_order_id') {return 123;}
-      else if (DLVar == 'twenga_currency') {return 'EUR';}
-      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
-      else{return false;}
-    });
-
-    // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
-
-    // Verify that the tag finished with failure.
-    assertApi('gtmOnFailure').wasCalled();
-- name: Transaction - Success
-  code: |-
-    mock('sendPixel', function(url, onSuccess, onFailure) {
-        onSuccess();
-    });
-
-    mock('queryPermission', true);
-
-
-    mock('copyFromDataLayer', function(DLVar){
-      if (DLVar == 'twenga_order_id') {return 123;}
-      else if (DLVar == 'twenga_currency') {return 'EUR';}
-      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1,'variant_id':'123ABC'},{'price':15.99,'id':784469,'quantity':8,'variant_id':'123ABC'},{'price':15048.43,'id':13548,'quantity':2,'variant_id':'123ABC'}];}
-      else{return false;}
-    });
-
-    // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: Transaction - Success - Missing order_id
-  code: |-
-    mock('sendPixel', function(url, onSuccess, onFailure) {
-        onSuccess();
-    });
-
-    mock('queryPermission', true);
-
-    mock('copyFromDataLayer', function(DLVar){
-      if (DLVar == 'twenga_order_id') {return undefined;}
-      else if (DLVar == 'twenga_currency') {return 'EUR';}
-      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}
-      else{return false;}
-    });
-
-    // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
-
-    // Verify that the tag finished with failure.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: Transaction - Success - Missing Currency
-  code: |-
-    mock('sendPixel', function(url, onSuccess, onFailure) {
-        onSuccess();
-    });
-
-    mock('queryPermission', true);
-
-    mock('copyFromDataLayer', function(DLVar){
-      if (DLVar == 'twenga_order_id') {return 123;}
-      else if (DLVar == 'twenga_currency') {return  undefined;}
-      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1},{'price':15.99,'id':784469,'quantity':8},{'price':15048.43,'id':13548,'quantity':2}];}
-      else{return false;}
-    });
-
-    // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onFailure();\n\
+    });\n\nmock('queryPermission', true);\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'twenga_order_id') {return 123;}\n  else if (DLVar == 'twenga_currency')\
+    \ {return 'EUR';}\n  else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nrunCode({\n\
+    \  event: 'tx', \n  host:'https://twenga.twgdns.com', \n  masterSiteId:666,\n\
+    \  order_id_key:'twenga_order_id',\n  order_items_key:'twenga_items',\n  order_attribution_weight_key:'twenga_attribution_weight',\n\
+    \  item_ref_id_key:'id',\n  item_price_key:'price',\n  item_quantity_key:'quantity',\n\
+    \  item_variant_id_key:'variant_id',\n  product_price_key:'twenga_price',\n  product_ref_id_key:'twenga_ref_id',\n\
+    \  product_variant_id:'twenga_variant_id'});\n\n// Verify that the tag finished\
+    \ with failure.\nassertApi('gtmOnFailure').wasCalled();"
 - name: Product - Success
-  code: |-
-    mock('sendPixel', function(url, onSuccess, onFailure) {
-        onSuccess();
-    });
-
-    mock('queryPermission', true);
-
-    mock('copyFromDataLayer', function(DLVar){
-      if (DLVar == 'twenga_ref_id') {return 21;}
-      else if (DLVar == 'twenga_price') {return 15.26;}
-      else if (DLVar == 'twenga_variant_id') {return '123ABC';}
-      else{return false;}
-    });
-
-    // Call runCode to run the template's code.
-    runCode({event: 'pp', host:'https://twenga.twgdns.com', masterSiteId:666, currency:'PLN'});
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
-- name: Transaction - Success - Minimum params
-  code: |-
-    mock('sendPixel', function(url, onSuccess, onFailure) {
-        onSuccess();
-    });
-
-    mock('queryPermission', true);
-
-    mock('copyFromDataLayer', function(DLVar){
-      if (DLVar == 'twenga_order_id') {return undefined;}
-      else if (DLVar == 'twenga_currency') {return undefined;}
-      else if (DLVar == 'twenga_items') {return undefined;}
-      else{return false;}
-    });
-
-    // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:undefined});
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'twenga_ref_id') {return 21;}\n  else if (DLVar == 'twenga_price')\
+    \ {return 15.26;}\n  else if (DLVar == 'twenga_variant_id') {return '123ABC';}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nlet\
+    \ sUrl = runCode({\n  event: 'pp', \n  host:'https://twenga.twgdns.com', \n  masterSiteId:666,\
+    \ \n  currency:'PLN',\n  order_id_key:'twenga_order_id',\n  order_items_key:'twenga_items',\n\
+    \  order_attribution_weight_key:'twenga_attribution_weight',\n  item_ref_id_key:'id',\n\
+    \  item_price_key:'price',\n  item_quantity_key:'quantity',\n  item_variant_id_key:'variant_id',\n\
+    \  product_price_key:'twenga_price',\n  product_ref_id_key:'twenga_ref_id',\n\
+    \  product_variant_id:'twenga_variant_id'\n});\n\n// Verify that the tag finished\
+    \ successfully.\nassertApi('gtmOnSuccess').wasCalled();"
 - name: Product - Success - Minimum params
-  code: |-
-    mock('sendPixel', function(url, onSuccess, onFailure) {
-        onSuccess();
-    });
-
-    mock('queryPermission', true);
-
-    mock('copyFromDataLayer', function(DLVar){
-      if (DLVar == 'twenga_ref_id') {return undefined;}
-      else if (DLVar == 'twenga_currency') {return undefined;}
-      else if (DLVar == 'twenga_price') {return undefined;}
-      else{return false;}
-    });
-
-    // Call runCode to run the template's code.
-    runCode({event: 'pp', host:'https://twenga.twgdns.com', masterSiteId:undefined});
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'twenga_ref_id') {return undefined;}\n  else if (DLVar == 'twenga_currency')\
+    \ {return undefined;}\n  else if (DLVar == 'twenga_price') {return undefined;}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nrunCode({\n\
+    \  event: 'pp', \n  host:'https://twenga.twgdns.com', \n  masterSiteId:undefined,\n\
+    \  order_id_key:'twenga_order_id',\n  order_items_key:'twenga_items',\n  order_attribution_weight_key:'twenga_attribution_weight',\n\
+    \  item_ref_id_key:'id',\n  item_price_key:'price',\n  item_quantity_key:'quantity',\n\
+    \  item_variant_id_key:'variant_id',\n  product_price_key:'twenga_price',\n  product_ref_id_key:'twenga_ref_id',\n\
+    \  product_variant_id:'twenga_variant_id'});\n\n// Verify that the tag finished\
+    \ successfully.\nassertApi('gtmOnSuccess').wasCalled();"
+- name: Transaction - Success
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'twenga_order_id') {return 123;}\n  else if (DLVar == 'twenga_currency')\
+    \ {return 'EUR';}\n  else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1,'variant_id':'123ABC'},{'price':15.99,'id':784469,'quantity':8,'variant_id':'123ABC'},{'price':15048.43,'id':13548,'quantity':2,'variant_id':'123ABC'}];}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nrunCode({\n\
+    \  event: 'tx', \n  host:'https://twenga.twgdns.com', \n  masterSiteId:666,\n\
+    \  order_id_key:'twenga_order_id',\n  order_items_key:'twenga_items',\n  order_attribution_weight_key:'twenga_attribution_weight',\n\
+    \  item_ref_id_key:'id',\n  item_price_key:'price',\n  item_quantity_key:'quantity',\n\
+    \  item_variant_id_key:'variant_id',\n  product_price_key:'twenga_price',\n  product_ref_id_key:'twenga_ref_id',\n\
+    \  product_variant_id:'twenga_variant_id'});\n\n// Verify that the tag finished\
+    \ successfully.\nassertApi('gtmOnSuccess').wasCalled();"
+- name: Transaction - Success - Missing order_id
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'twenga_order_id') {return undefined;}\n  else if (DLVar == 'twenga_currency')\
+    \ {return 'EUR';}\n  else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1}];}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nrunCode({\n\
+    \  event: 'tx', \n  host:'https://twenga.twgdns.com', \n  masterSiteId:666,\n\
+    \  order_id_key:'twenga_order_id',\n  order_items_key:'twenga_items',\n  order_attribution_weight_key:'twenga_attribution_weight',\n\
+    \  item_ref_id_key:'id',\n  item_price_key:'price',\n  item_quantity_key:'quantity',\n\
+    \  item_variant_id_key:'variant_id',\n  product_price_key:'twenga_price',\n  product_ref_id_key:'twenga_ref_id',\n\
+    \  product_variant_id:'twenga_variant_id'\n});\n\n// Verify that the tag finished\
+    \ with failure.\nassertApi('gtmOnSuccess').wasCalled();"
+- name: Transaction - Success - Missing Currency (Defaults to EUR)
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'twenga_order_id') {return 123;}\n  else if (DLVar == 'twenga_currency')\
+    \ {return  undefined;}\n  else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1},{'price':15.99,'id':784469,'quantity':8},{'price':15048.43,'id':13548,'quantity':2}];}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nrunCode({\n\
+    \  event: 'tx', \n  host:'https://twenga.twgdns.com', \n  masterSiteId:666,\n\
+    \  order_id_key:'twenga_order_id',\n  order_items_key:'twenga_items',\n  order_attribution_weight_key:'twenga_attribution_weight',\n\
+    \  item_ref_id_key:'id',\n  item_price_key:'price',\n  item_quantity_key:'quantity',\n\
+    \  item_variant_id_key:'variant_id',\n  product_price_key:'twenga_price',\n  product_ref_id_key:'twenga_ref_id',\n\
+    \  product_variant_id:'twenga_variant_id'});\n\n// Verify that the tag finished\
+    \ successfully.\nassertApi('gtmOnSuccess').wasCalled();"
+- name: Transaction - Success - Minimum params
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'twenga_order_id') {return undefined;}\n  else if (DLVar == 'twenga_currency')\
+    \ {return undefined;}\n  else if (DLVar == 'twenga_items') {return undefined;}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nrunCode({\n\
+    \  event: 'tx', \n  host:'https://twenga.twgdns.com', \n  masterSiteId:undefined,\n\
+    \  order_id_key:'twenga_order_id',\n  order_items_key:'twenga_items',\n  order_attribution_weight_key:'twenga_attribution_weight',\n\
+    \  item_ref_id_key:'id',\n  item_price_key:'price',\n  item_quantity_key:'quantity',\n\
+    \  item_variant_id_key:'variant_id',\n  product_price_key:'twenga_price',\n  product_ref_id_key:'twenga_ref_id',\n\
+    \  product_variant_id:'twenga_variant_id'\n});\n\n// Verify that the tag finished\
+    \ successfully.\nassertApi('gtmOnSuccess').wasCalled();"
 - name: Transaction - Success - Missing variant_id
-  code: |-
-    mock('sendPixel', function(url, onSuccess, onFailure) {
-        onSuccess();
-    });
-
-    mock('queryPermission', true);
-
-
-    mock('copyFromDataLayer', function(DLVar){
-      if (DLVar == 'twenga_order_id') {return 123;}
-      else if (DLVar == 'twenga_currency') {return 'EUR';}
-      else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1},{'price':15.99,'id':784469,'quantity':8},{'price':15048.43,'id':13548,'quantity':2}];}
-      else{return false;}
-    });
-
-    // Call runCode to run the template's code.
-    runCode({event: 'tx', host:'https://twenga.twgdns.com', masterSiteId:666});
-
-    // Verify that the tag finished successfully.
-    assertApi('gtmOnSuccess').wasCalled();
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'twenga_order_id') {return 123;}\n  else if (DLVar == 'twenga_currency')\
+    \ {return 'EUR';}\n  else if (DLVar == 'twenga_items') {return [{'price':10.00,'id':666666,'quantity':1},{'price':15.99,'id':784469,'quantity':8},{'price':15048.43,'id':13548,'quantity':2}];}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nrunCode({\n\
+    \  event: 'tx', \n  host:'https://twenga.twgdns.com', \n  masterSiteId:666,\n\
+    \  order_id_key:'twenga_order_id',\n  order_items_key:'twenga_items',\n  order_attribution_weight_key:'twenga_attribution_weight',\n\
+    \  item_ref_id_key:'id',\n  item_price_key:'price',\n  item_quantity_key:'quantity',\n\
+    \  item_variant_id_key:'variant_id',\n  product_price_key:'twenga_price',\n  product_ref_id_key:'twenga_ref_id',\n\
+    \  product_variant_id:'twenga_variant_id'\n});\n\n// Verify that the tag finished\
+    \ successfully.\nassertApi('gtmOnSuccess').wasCalled();"
+- name: Product - Success - Setting custom dataLayer vars
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'item_ref_id') {return 21;}\n  else if (DLVar == 'item_price')\
+    \ {return 15.26;}\n  else if (DLVar == 'item_variant_id') {return '123ABC';}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nlet\
+    \ sUrl = runCode({\n  event: 'pp', \n  host:'https://twenga.twgdns.com', \n  masterSiteId:666,\
+    \ \n  currency:'PLN',\n  product_price_key:'item_price',\n  product_ref_id_key:'item_ref_id',\n\
+    \  product_variant_id:'item_variant_id'\n});\n\n// Verify that the tag finished\
+    \ successfully.\nassertApi('gtmOnSuccess').wasCalled();"
+- name: Product - Success - Unmatching dataLayer vars
+  code: "mock('sendPixel', function(url, onSuccess, onFailure) {\n    onSuccess();\n\
+    });\n\nmock('queryPermission', true);\n\nmock('copyFromDataLayer', function(DLVar){\n\
+    \  if (DLVar == 'item_ref_id') {return 21;}\n  else if (DLVar == 'item_price')\
+    \ {return 15.26;}\n  else if (DLVar == 'item_variant_id') {return '123ABC';}\n\
+    \  else{return false;}\n});\n\n// Call runCode to run the template's code.\nlet\
+    \ sUrl = runCode({\n  event: 'pp', \n  host:'https://twenga.twgdns.com', \n  masterSiteId:666,\
+    \ \n  currency:'PLN',\n  product_price_key:'price',\n  product_ref_id_key:'ref_id',\n\
+    \  product_variant_id:'variant_id'\n});\n\n// Verify that the tag finished successfully.\n\
+    assertApi('gtmOnSuccess').wasCalled();"
 
 
 ___NOTES___
 
-Created on 09/03/2020 à 15:49:57
+Created on 31/03/2020 à 16:10:24
 
 
