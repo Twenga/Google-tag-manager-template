@@ -14,7 +14,7 @@ ___INFO___
   "version": 1,
   "securityGroups": [],
   "displayName": "Twenga Pixel",
- "categories": ["CONVERSIONS","AFFILIATE_MARKETING"],
+  "categories": ["CONVERSIONS","AFFILIATE_MARKETING"],
   "brand": {
     "id": "twenga",
     "displayName": "Twenga",
@@ -133,12 +133,7 @@ ___TEMPLATE_PARAMETERS___
     "name": "order_attribution_weight_key",
     "displayName": "DataLayer order attribution weight key",
     "simpleValueType": true,
-    "valueValidators": [
-      {
-        "type": "NON_EMPTY"
-      }
-    ],
-    "help": "Datalayer variable containing the order attribution weight , for transaction events."
+    "help": "Datalayer variable containing the order attribution weight , for transaction events. The order attribution weight is optional."
   },
   {
     "type": "TEXT",
@@ -209,10 +204,10 @@ ___TEMPLATE_PARAMETERS___
   },
   {
     "type": "TEXT",
-    "name": "product_variant_id",
+    "name": "product_variant_id_key",
     "displayName": "DataLayer product variant id key",
     "simpleValueType": true,
-    "help": "Datalayer variable containing the product ref, for product display events. The product variant id is optional."
+    "help": "Datalayer variable containing the product variant id, for product display events. The product variant id is optional."
   }
 ]
 
@@ -4780,6 +4775,6 @@ scenarios:
 
 ___NOTES___
 
-Created on 31/03/2020 à 16:10:24
+Created on 01/04/2020 à 17:25:14
 
 
