@@ -1,5 +1,5 @@
 homepage: "https://www.twenga-solutions.com/en/"
 documentation: "https://www.twenga-solutions.com/en/shoppingboostpixel-GTM-setup"
 versions:
-  - sha: e28211d1f0aa0eea8a1eab79d84df6cc25c6b207
+  - sha: 740f511d52c0605310c024624a0c13688131d867
     changeNotes: Making expected dataLayer vars configurable
