@@ -1,5 +1,5 @@
 homepage: "https://www.twenga-solutions.com/en/"
 documentation: "https://www.twenga-solutions.com/en/shoppingboostpixel-GTM-setup"
 versions:
-  - sha: c3406dc97e732d7fc9afcca92eb77aed59c4a8ce
-    changeNotes: Republishing current version
+  - sha: 2ed4bd64901351ff228ab811f4b54af5ea4ecdea
+    changeNotes: Switching sendPixel permissions to Any HTTPS
