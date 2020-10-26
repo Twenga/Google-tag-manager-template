@@ -1,5 +1,5 @@
 homepage: "https://www.twenga-solutions.com/en/"
 documentation: "https://www.twenga-solutions.com/en/shoppingboostpixel-GTM-setup"
 versions:
-  - sha: e7ca0b198a07fa185217cc0489499a14f5e677d9
+  - sha: 7ffb768018748ff6cca810b3bb5073a35f84e3a4
     changeNotes: Adding new country parameter
